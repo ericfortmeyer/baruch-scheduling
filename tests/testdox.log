@@ -1,0 +1,36 @@
+BaruchScheduling\Functions\CreateRangeOfHours
+ [x] Creates range of instances of hour
+ [x] Hour in range of hours is booked
+
+BaruchScheduling\Models\Day
+ [x] Exists
+ [x] Has expected date
+ [x] Will display expected day of month
+ [x] Will display expected day of the week
+ [x] Off day flag works
+ [x] Is past flag works
+ [x] Has expected open hour
+ [x] Has expected last hour available
+ [x] Has expected range of hours
+ [x] Add day works
+ [x] Sub day works
+ [x] Custom hours by day of week the works
+ [ ] Custom hours by date works
+
+BaruchScheduling\Models\Event
+ [x] Exists
+ [x] Has expected date
+ [x] Has expected time
+ [x] Has expected duration in minutes
+ [x] Has expected duration in hours
+
+BaruchScheduling\Models\Hour
+ [x] To string method returns date with meridiem
+ [x] To 24 hour method returns expected string
+ [x] To 12 hour method returns expected string
+
+BaruchScheduling\Models\Week
+ [x] Exists
+ [x] First day is first day of week of given day
+ [x] Contains only instances of days
+

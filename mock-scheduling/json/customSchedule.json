@@ -1,0 +1,17 @@
+[
+    {
+        "day": "Monday",
+        "open": "T09:00-05",
+        "closed": null
+    },
+    {
+        "day": "Wednesday",
+        "open": null,
+        "closed": "T19:00-05"
+    },
+    {
+        "day": "Friday",
+        "open": "10:00",
+        "closed": "T20:00-05"
+    }
+]
