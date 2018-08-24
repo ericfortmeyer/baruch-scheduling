@@ -172,9 +172,6 @@ final class Day
         $this->custom_hours_by_date = $custom_hours_by_date;
         $this->custom_off_days = $custom_off_days;
 
-        /**
-         * Add events as a parameter so that this won't have to be last
-         */
         $this->createHours(
             $open,
             $closed,
