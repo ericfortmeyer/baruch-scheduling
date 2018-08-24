@@ -9,9 +9,9 @@ final class Day
 {
     protected const FORMAT_MONTH = "F";
     protected const FORMAT_DATE = "Y-m-d";
-    protected const FORMAT_DAY_OF_MONTH = "j";
-    protected const DAY_OF_WEEK_AS_TEXT = "l";
-    protected const DAY_OF_WEEK_AS_INT = "w";
+    public const FORMAT_DAY_OF_MONTH = "j";
+    public const DAY_OF_WEEK_AS_TEXT = "l";
+    public const DAY_OF_WEEK_AS_INT = "w";
 
     public const ONE_MONTH = "P1M";
     public const ONE_WEEK = "P1W";
@@ -159,8 +159,6 @@ final class Day
         $this->day_of_the_month = $this->dayOfMonthFormat();
         $this->month = $this->monthFormat();
 
-        $this->createHours($open, $closed, $custom_hours_by_date, $custom_hours_by_day);
-
         $this->isPast = $this->dt < $this->today();
         $this->isOffDay = $this->isOffDay($regular_off_days, $custom_off_days);
         $this->isLastDayOfMonth = $this->isLastDayOfMonth();
@@ -173,6 +171,18 @@ final class Day
         $this->custom_hours_by_day = $custom_hours_by_day;
         $this->custom_hours_by_date = $custom_hours_by_date;
         $this->custom_off_days = $custom_off_days;
+
+        /**
+         * Add events as a parameter so that this won't have to be last
+         */
+        $this->createHours(
+            $open,
+            $closed,
+            $custom_hours_by_date,
+            $custom_hours_by_day,
+            $events,
+            $date
+        );        
     }
 
     public function add(string $interval_spec, array $target_days_events = []): self
@@ -265,33 +275,45 @@ final class Day
         Hour $open,
         Hour $closed,
         array $custom_hours_by_date,
-        array $custom_hours_by_day
+        array $custom_hours_by_day,
+        array $events,
+        string $date
     ) {
 
         $this->hours = $this->createRangeOfHoursFromCustomHoursByDate(
             $custom_hours_by_date,
             $open,
-            $closed
+            $closed,
+            $events,
+            $date
         ) ?? $this->createRangeOfHoursFromCustomHoursByDayOfWeek(
             $custom_hours_by_day,
             $open,
-            $closed
+            $closed,
+            $events,
+            $date
         ) ?? $this->createRangeOfHours(
             $open,
-            $closed
+            $closed,
+            $events,
+            $date
         );
     }
 
     protected function createRangeOfHoursFromCustomHoursByDayOfWeek(
         array $custom_hours,
         Hour $open,
-        Hour $closed
+        Hour $closed,
+        array $events,
+        string $date
     ) {
         foreach ($custom_hours as $obj) {
             if ($obj->day_of_week === $this->day_of_the_week) {
                 return $this->createRangeOfHours(
                     $obj->open ?? $open,
-                    $obj->closed ?? $closed
+                    $obj->closed ?? $closed,
+                    $events,
+                    $date
                 );
             }
         }
@@ -300,24 +322,29 @@ final class Day
     protected function createRangeOfHoursFromCustomHoursByDate(
         array $custom_hours_by_date,
         Hour $open,
-        Hour $closed
+        Hour $closed,
+        array $events,
+        string $date
     ) {
         foreach ($custom_hours_by_date as $obj) {
             if ($obj->date === $this->date) {
                 return $this->createRangeOfHours(
                     $obj->open ?? $open,
-                    $obj->closed ?? $closed
+                    $obj->closed ?? $closed,
+                    $events,
+                    $date
                 );
             }
         }
     }
 
-    protected function createRangeOfHours(Hour $open, Hour $closed): array
+    protected function createRangeOfHours(Hour $open, Hour $closed, array $events, string $date): array
     {
         return \BaruchScheduling\Functions\createRangeOfHours(
             $open->hourOnlyFormat(),
             $this->lastHourAvailable((int) $closed->hourOnlyFormat()),
-            $this->date
+            $date,
+            $events
         );
     }
 
@@ -404,7 +431,7 @@ final class Day
 
     protected function isLastDayOfMonth(): bool
     {
-        return $this->dt->add(new DateInterval(static::ONE_DAY)) === false;
+        return $this->dt->add(new DateInterval(static::ONE_DAY))->format("j") == "1";
     }
 
     protected function dayOfWeekAsTextFormat(): string
