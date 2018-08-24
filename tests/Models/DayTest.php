@@ -258,11 +258,11 @@ class DayTest extends TestCase
                     new Hour(15),
                     new Hour(20)
                 ),
-                // new CustomHoursByDate(
-                //     "2019-01-01",
-                //     new Hour(2),
-                //     new Hour(5)
-                // )
+                new CustomHoursByDate(
+                    "2019-01-01",
+                    new Hour(2),
+                    new Hour(5)
+                )
             ]
         );
         assertEquals(
@@ -288,6 +288,7 @@ class DayTest extends TestCase
             Hour::class,
             $result
         );
+
 
     }
 }

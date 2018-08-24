@@ -49,7 +49,6 @@ class WeekTest extends TestCase
             ? [$month]
             : array_map(
                 function ($month): string {
-                    // return $month < 10 ? "0$month" : $month;
                     return $month;
                 },
                 range(1, 12)
