@@ -159,6 +159,11 @@ final class Week
     protected function isOnOrAfterCutoffDay(Day $day): bool
     {
         return $this->dayOfWeekAsInt($day)
-            >= $day->mapToInt(self::CUTOFF_DAY_FOR_DISPLAYING_CURRENT_MONTH);
+            >= (new \DateTimeImmutable())
+                ->createFromFormat(
+                    Day::DAY_OF_WEEK_AS_TEXT,
+                    self::CUTOFF_DAY_FOR_DISPLAYING_CURRENT_MONTH
+                )
+                ->format(Day::DAY_OF_WEEK_AS_INT) == "1";
     }
 }
