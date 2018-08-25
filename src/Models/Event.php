@@ -18,7 +18,7 @@ namespace BaruchScheduling\Models;
  * description
  * notes
  */
-class Event
+class Event implements Comparable
 {
     /**
      * @var string|int
@@ -115,6 +115,18 @@ class Event
         $this->description = $description;
         $this->participants = $participants;
         $this->notes = $notes;
+    }
+
+    /**
+     * Is the event on the day and hour represented by the given date time string
+     * 
+     * @param string $date_time  An ISO 8601 date time string with time zone
+     * @return bool
+     */
+    public function compareDatetimeString(string $date_time): bool
+    {
+        // may need to verify that both date time strings are properly formatted
+        return $this->date_time === $date_time;
     }
 
     /**
