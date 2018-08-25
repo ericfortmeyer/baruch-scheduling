@@ -29,8 +29,7 @@ final class Week
     }
 
     /**
-     * Create a week that has as one of it's days the given day
-     * 
+     * Create a week that has as one of it's "days" the given day
      * @param Day $day
      * @return self
      */

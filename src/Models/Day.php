@@ -173,9 +173,9 @@ final class Day
             $closed,
             $custom_hours_by_date,
             $custom_hours_by_day,
-            $events,
-            $date
-        );        
+            $date,
+            $events
+        );
     }
 
     public function add(string $interval_spec, array $target_days_events = []): self
@@ -208,6 +208,12 @@ final class Day
         );
     }
 
+   /**
+    * Add objects that represent "events" to the internal state of a new object
+    * A new object is created and returned in order to preserve the immutablity of this class
+    * @param array<Event> $events
+    * @return self
+    */
     public function withEvents(array $events): self
     {
         return new $this(
@@ -269,27 +275,27 @@ final class Day
         Hour $closed,
         array $custom_hours_by_date,
         array $custom_hours_by_day,
-        array $events,
-        string $date
+        string $date,
+        array $events
     ) {
 
         $this->hours = $this->createRangeOfHoursFromCustomHoursByDate(
             $custom_hours_by_date,
             $open,
             $closed,
-            $events,
-            $date
+            $date,
+            $events
         ) ?? $this->createRangeOfHoursFromCustomHoursByDayOfWeek(
             $custom_hours_by_day,
             $open,
             $closed,
-            $events,
-            $date
+            $date,
+            $events
         ) ?? $this->createRangeOfHours(
             $open,
             $closed,
-            $events,
-            $date
+            $date,
+            $events
         );
     }
 
@@ -297,16 +303,16 @@ final class Day
         array $custom_hours,
         Hour $open,
         Hour $closed,
-        array $events,
-        string $date
+        string $date,
+        array $events
     ) {
         foreach ($custom_hours as $obj) {
             if ($obj->day_of_week === $this->day_of_the_week) {
                 return $this->createRangeOfHours(
                     $obj->open ?? $open,
                     $obj->closed ?? $closed,
-                    $events,
-                    $date
+                    $date,
+                    $events
                 );
             }
         }
@@ -316,22 +322,29 @@ final class Day
         array $custom_hours_by_date,
         Hour $open,
         Hour $closed,
-        array $events,
-        string $date
+        string $date,
+        array $events
     ) {
-        foreach ($custom_hours_by_date as $obj) {
-            if ($obj->date === $this->date) {
-                return $this->createRangeOfHours(
-                    $obj->open ?? $open,
-                    $obj->closed ?? $closed,
-                    $events,
-                    $date
-                );
-            }
-        }
+        $result = current(
+            array_filter(
+                $custom_hours_by_date,
+                function ($obj) {
+                    return $obj->date === $this->date;
+                }
+            )
+        );
+
+        return $result
+            ? $this->createRangeOfHours(
+                $result->open ?? $open,
+                $result->closed ?? $closed,
+                $date,
+                $events
+              )
+            : null;
     }
 
-    protected function createRangeOfHours(Hour $open, Hour $closed, array $events, string $date): array
+    protected function createRangeOfHours(Hour $open, Hour $closed, string $date, array $events): array
     {
         return \BaruchScheduling\Functions\createRangeOfHours(
             $open->hourOnlyFormat(),
