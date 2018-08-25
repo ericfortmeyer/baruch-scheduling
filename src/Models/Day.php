@@ -30,10 +30,6 @@ final class Day
     public $isPast = false;
 
     /**
-     * Is 
-     */
-
-    /**
      * Is this the last day of the month
      * @var bool
      */
