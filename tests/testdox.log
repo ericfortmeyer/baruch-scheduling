@@ -13,8 +13,8 @@ BaruchScheduling\Models\Day
  [x] Has expected last hour available
  [x] Has expected range of hours
  [x] Add day works
- [x] Sub day works
- [x] Custom hours by day of week the works
+ [x] Subtract day works
+ [x] Custom hours by day of week works
  [x] Custom hours by date works
 
 BaruchScheduling\Models\Event

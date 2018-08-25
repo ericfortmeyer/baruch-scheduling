@@ -135,7 +135,7 @@ class DayTest extends TestCase
         );
     }
 
-    public function testSubDayWorks()
+    public function testSubtractDayWorks()
     {
         assertEquals(
             "Wednesday",
@@ -289,6 +289,9 @@ class DayTest extends TestCase
             $result
         );
 
-
+        assertEquals(
+            "17:00",
+            $result->to24HourFormat()
+        );
     }
 }
