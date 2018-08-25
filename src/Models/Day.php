@@ -90,13 +90,13 @@ final class Day
 
     /**
      * An array of objects representing days with a customized schedule
-     * @var array<CustomHoursByDayOfWeek>
+     * @var array<CompareByDayOfWeekInterface>
      */
     public $custom_hours_by_day = [];
 
     /**
      * An array of objects representing dates with a customized schedule
-     * @var array<CustomHoursByDate>
+     * @var array<CompareByDateInterface>
      */
     public $custom_hours_by_date;
 
@@ -130,8 +130,8 @@ final class Day
      * @param Hour $closed. REQUIRED
      * @param array<string> $regular_off_days (ex. ["Sunday", "Saturday"]). Default empty array
      * @param array<Event> $events.  Default empty array
-     * @param array<CustomHoursByDayOfWeek> $custom_hours_by_day.  Default empty array
-     * @param array<CustomHoursByDate> $custom_hours_by_date. Default empty array
+     * @param array<CompareByDayOfWeekInterface> $custom_hours_by_day.  Default empty array
+     * @param array<CompareByDateInterface> $custom_hours_by_date. Default empty array
      * @param array<string> $custom_off_days.  Array with ISO 8601 date strings. Default empty array
      */
     public function __construct(
@@ -228,6 +228,14 @@ final class Day
         );
     }
 
+    /**
+     * Add objects that represent customization in the schedule using a day of the week
+     * For example: "Instead of our regular hours, our business will open at 10:00am and close
+     * at 2:00pm on Sundays."
+     * 
+     * @param array<CompareByDayOfWeekInterface> $custom_hours
+     * @return self
+     */
     public function withCustomHoursByDayOfWeek(array $custom_hours): self
     {
         return new $this(
@@ -242,6 +250,14 @@ final class Day
         );
     }
 
+    /**
+     * Add an array of objects that represent customization in the schedule using a given date
+     * For example: "Instead of our regular hours, our business will open at 11:00am and close
+     * at 2:00pm on July 14, 1914."
+     * 
+     * @param array<CompareByDateInterface> $custom_hours_by_date
+     * @return self
+     */
     public function withCustomHoursByDate(array $custom_hours_by_date): self
     {
         return new $this(
@@ -306,16 +322,24 @@ final class Day
         string $date,
         array $events
     ) {
-        foreach ($custom_hours as $obj) {
-            if ($obj->day_of_week === $this->day_of_the_week) {
-                return $this->createRangeOfHours(
-                    $obj->open ?? $open,
-                    $obj->closed ?? $closed,
-                    $date,
-                    $events
-                );
-            }
-        }
+
+        $result = current(
+            array_filter(
+                $custom_hours,
+                function (CompareByDayOfWeekInterface $obj) {
+                    return $obj->compareByDayOfWeek($this->day_of_the_week);
+                }
+            )
+        );
+
+        return $result
+            ? $this->createRangeOfHours(
+                $result->open ?? $open,
+                $result->closed ?? $closed,
+                $date,
+                $events
+            )
+            : null;
     }
 
     protected function createRangeOfHoursFromCustomHoursByDate(
@@ -328,8 +352,8 @@ final class Day
         $result = current(
             array_filter(
                 $custom_hours_by_date,
-                function ($obj) {
-                    return $obj->date === $this->date;
+                function (CompareByDateInterface $obj) {
+                    return $obj->compareByDate($this->date);
                 }
             )
         );
@@ -340,7 +364,7 @@ final class Day
                 $result->closed ?? $closed,
                 $date,
                 $events
-              )
+            )
             : null;
     }
 

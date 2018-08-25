@@ -2,7 +2,7 @@
 
 namespace BaruchScheduling\Models;
 
-final class CustomHoursByDate
+final class CustomHoursByDate implements CompareByDateInterface
 {
     /**
      * Date.  ISO 8601
@@ -31,5 +31,16 @@ final class CustomHoursByDate
         $this->date = $date;
         $this->open = $open;
         $this->closed = $closed;
+    }
+
+    /**
+     * Is this custom schedule on the given date?
+     * 
+     * @param string $date
+     * @return bool
+     */
+    public function compareByDate(string $date): bool
+    {
+        return $this->date === $date;
     }
 }

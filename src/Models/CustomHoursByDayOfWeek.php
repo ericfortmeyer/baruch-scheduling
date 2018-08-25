@@ -2,7 +2,7 @@
 
 namespace BaruchScheduling\Models;
 
-final class CustomHoursByDayOfWeek
+final class CustomHoursByDayOfWeek implements CompareByDayOfWeekInterface
 {
     /**
      * Day of the week (ex. "Sunday")
@@ -31,5 +31,16 @@ final class CustomHoursByDayOfWeek
         $this->day_of_week = $day_of_week;
         $this->open = $open;
         $this->closed = $closed;
+    }
+
+    /**
+     * Is the custom schedule on the given day of the week?
+     * 
+     * @param string $day_of_week
+     * @return bool
+     */
+    public function compareByDayOfWeek(string $day_of_week): bool
+    {
+        return $this->day_of_week === $day_of_week;
     }
 }
