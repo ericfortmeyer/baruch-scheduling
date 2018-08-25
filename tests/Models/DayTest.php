@@ -148,7 +148,7 @@ class DayTest extends TestCase
         );
     }
 
-    public function testCustomHoursByDayOfWeekTheWorks()
+    public function testCustomHoursByDayOfWeekWorks()
     {
         $day = new Day(
             "2018-08-25",
