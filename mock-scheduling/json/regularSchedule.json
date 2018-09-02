@@ -1,6 +1,6 @@
 {
-    "open": "07:00-05",
-    "closed": "17:00-05",
+    "open": "T09:00-05",
+    "closed": "T17:00-05",
     "off_days": [
         "Sunday",
         "Saturday"

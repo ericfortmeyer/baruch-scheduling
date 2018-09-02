@@ -1,17 +1,17 @@
 [
     {
         "day": "Monday",
-        "open": "T09:00-05",
+        "open": "T08:00-05",
         "closed": null
     },
     {
         "day": "Wednesday",
         "open": null,
-        "closed": "T19:00-05"
+        "closed": "T22:00-05"
     },
     {
         "day": "Friday",
-        "open": "10:00",
+        "open": "T11:00-05",
         "closed": "T20:00-05"
     }
 ]
