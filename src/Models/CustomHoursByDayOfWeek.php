@@ -35,7 +35,7 @@ final class CustomHoursByDayOfWeek implements CompareByDayOfWeekInterface
 
     /**
      * Is the custom schedule on the given day of the week?
-     * 
+     *
      * @param string $day_of_week
      * @return bool
      */

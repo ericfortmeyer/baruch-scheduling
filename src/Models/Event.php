@@ -4,7 +4,7 @@ namespace BaruchScheduling\Models;
 
 /**
  * An extendable class for schedulable events
- * 
+ *
  * id
  * creator
  * owner
@@ -75,7 +75,7 @@ class Event implements Comparable
      * @var array<string|int>
      */
 
-     public $participants = [];
+    public $participants = [];
 
     /**
      * @var string
@@ -84,7 +84,7 @@ class Event implements Comparable
 
     /**
      * Construct an Event
-     * 
+     *
      * @param string|int $id
      * @param string|int $creator_id
      * @param string|int $owner_id
@@ -119,7 +119,7 @@ class Event implements Comparable
 
     /**
      * Is the event on the day and hour represented by the given date time string
-     * 
+     *
      * @param string $date_time  An ISO 8601 date time string with time zone
      * @return bool
      */
@@ -131,7 +131,7 @@ class Event implements Comparable
 
     /**
      * Get the date from the ISO 8601 provided date
-     * 
+     *
      * @param string $iso_8601_date_time
      * @return string
      */
@@ -147,7 +147,7 @@ class Event implements Comparable
 
     /**
      * Get the time in 24 hour format from the ISO 8601 provided date
-     * 
+     *
      * @param string $iso_8601_date_time
      * @return string
      */

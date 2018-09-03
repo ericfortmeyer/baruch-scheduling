@@ -75,7 +75,7 @@ final class DaysOfTheWeek
                 $this->interval(
                     $this->currentDayOfWeekAsInt()
                 )
-        );
+            );
     }
 
     /**
@@ -99,7 +99,6 @@ final class DaysOfTheWeek
      */
     protected function daysOfWeekAsIntegers(): array
     {
-        return range(0,6);
+        return range(0, 6);
     }
-
 }

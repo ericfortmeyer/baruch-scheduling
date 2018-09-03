@@ -35,7 +35,7 @@ final class CustomHoursByDate implements CompareByDateInterface
 
     /**
      * Is this custom schedule on the given date?
-     * 
+     *
      * @param string $date
      * @return bool
      */
