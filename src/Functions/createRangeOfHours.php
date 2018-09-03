@@ -7,7 +7,7 @@ use BaruchScheduling\Models\Comparable;
 
 /**
  * Create an array of Hour objects
- * 
+ *
  * Each hour can be flagged as booked.  An array of objects that represents "events", "appointments",
  * etc. should have a method that takes an ISO 8601 date time string as an argument to determine
  * if the "event" is on the date and time represented by the date time string.  The array of objects
@@ -17,7 +17,7 @@ use BaruchScheduling\Models\Comparable;
  * for this simplified approach is that if only a portion of all "events" are provided, there is
  * a risk that this part of the application will not receive the information necessary to ensure
  * that all "Hours" that should be flagged as booked will be.
- * 
+ *
  * 1. The first hour is the start of the range of hours
  * 2. The last hour is the end of the range of hours.
  *    For example, it can be the hour the business is closed minus one
@@ -28,20 +28,21 @@ use BaruchScheduling\Models\Comparable;
  * 4. An array of objects that have a method that takes an ISO 8601 date time string as an
  *    argument to determine if the event that the object represents is on the date and time
  *    represented by the date time string.
- * 
- * @param string $first_hour
- * @param string $last_hour
+ *
+ * @param int $first_hour
+ * @param int $last_hour
  * @param string $date yyyy-mm-dd
  * @param array<Comparable> $events
- * 
+ *
  * @return array<Hour>
  */
-function createRangeOfHours(string $first_hour, string $last_hour, string $date, array $events = []): array
+function createRangeOfHours(int $first_hour, int $last_hour, string $date, array $events = []): array
 {
     return array_map(
-        function (string $hour) use ($date, $events): Hour
-        {
-            $date_time = (new \DateTimeImmutable("${date}T${hour}:00"))->format("c");
+        function (string $hour) use ($date, $events): Hour {
+            $dt = new \DateTimeImmutable("${date}T${hour}:00");
+            $date_time = $dt->format("c");
+            $isPast = $hour < $dt->format("H");
             $isBooked = !empty(
                 current(
                     array_filter(
@@ -52,7 +53,12 @@ function createRangeOfHours(string $first_hour, string $last_hour, string $date,
                     )
                 )
             );
-            return new Hour($hour, $isBooked);
+            /**
+             * TODO:
+             * Add a isPast flag.
+             * This is the only way to prevent today's past timeslots from being available
+             */
+            return new Hour($hour, $isBooked, $isPast);
         },
         range($first_hour, $last_hour)
     );
