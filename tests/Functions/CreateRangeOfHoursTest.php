@@ -38,7 +38,7 @@ class CreateRangeOfHoursTest extends TestCase
     {
         \assertContainsOnlyInstancesOf(
             Hour::class,
-            createRangeOfHours(7,19, date("Y-m-d"))
+            createRangeOfHours(7, 19, date("Y-m-d"))
         );
 
         \assertContainsOnlyInstancesOf(
@@ -54,13 +54,13 @@ class CreateRangeOfHoursTest extends TestCase
         $start = 8;
         $params[3] = "${date}T0${start}:00:00-05:00";
         $result = current(
-                array_filter(
-                    createRangeOfHours($start, 19, $date, [new Event(...$params)]),
-                    function ($hour) {
+            array_filter(
+                createRangeOfHours($start, 19, $date, [new Event(...$params)]),
+                function ($hour) {
                         return $hour->isBooked;
-                    }
-                )
-            );
+                }
+            )
+        );
         assertInstanceOf(
             Hour::class,
             $result
@@ -87,7 +87,7 @@ class CreateRangeOfHoursTest extends TestCase
         );
 
         assertTrue(
-            !empty($result_2) && $result_2->isBooked && $result_2->hourOnlyFormat() === $test_hour
+            !empty($result_2) && $result_2->isBooked && $result_2->hourOnlyFormat() == $test_hour
         );
     }
 }
