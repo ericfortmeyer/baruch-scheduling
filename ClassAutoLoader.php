@@ -22,7 +22,7 @@ class ClassAutoLoader
 
     protected static function toPath(string $class): string
     {
-        return self::ROOT_DIR
+        return __DIR__ . DIRECTORY_SEPARATOR . self::ROOT_DIR
         . self::stripRootNamespace(
             self::replaceNamespaceSeparatorWithDirectorySeparator($class)
         )

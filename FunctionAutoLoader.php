@@ -10,7 +10,7 @@ class FunctionAutoLoader
         ".DS_Store"
     ];
 
-    protected const PATH_TO_FUNCTIONS = "src/Functions/";
+    protected const PATH_TO_FUNCTIONS = __DIR__. DIRECTORY_SEPARATOR . "src/Functions/";
 
     public static function loadFunctions()
     {
@@ -26,5 +26,4 @@ class FunctionAutoLoader
             )
         );
     }
-
 }
