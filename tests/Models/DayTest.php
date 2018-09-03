@@ -47,7 +47,7 @@ class DayTest extends TestCase
     public function testWillDisplayExpectedDayOfTheWeek()
     {
         assertEquals(
-            "Thursday",    
+            "Thursday",
             $this->test_class->day_of_the_week
         );
     }
@@ -77,15 +77,17 @@ class DayTest extends TestCase
 
     public function testHasExpectedOpenHour()
     {
-        assertTrue(
-            $this->test_class->hours[0]->hourOnlyFormat() === "8"
+        assertEquals(
+            $this->test_class->hours[0]->hourOnlyFormat(),
+            "8"
         );
     }
 
     public function testHasExpectedLastHourAvailable()
     {
-        assertTrue(
-            end($this->test_class->hours)->hourOnlyFormat() === "9"
+        assertEquals(
+            end($this->test_class->hours)->hourOnlyFormat(),
+            "9"
         );
     }
 
@@ -117,7 +119,7 @@ class DayTest extends TestCase
         );
 
         assertEquals(
-            range(8,17),
+            range(8, 17),
             $result
         );
     }
@@ -252,7 +254,7 @@ class DayTest extends TestCase
         $test_2 = $day
             ->withEvents([new Event(...$event_params)])
             ->withCustomHoursByDate(
-            [
+                [
                 new CustomHoursByDate(
                     "2018-08-25",
                     new Hour(15),
@@ -263,8 +265,8 @@ class DayTest extends TestCase
                     new Hour(2),
                     new Hour(5)
                 )
-            ]
-        );
+                ]
+            );
         assertEquals(
             "15:00",
             $test_2->hours[0]->to24HourFormat()
