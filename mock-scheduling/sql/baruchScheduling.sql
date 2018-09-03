@@ -5,10 +5,10 @@ CREATE TABLE `days_off` (
 );
 CREATE TABLE `regular_hours` (
     open VARCHAR(30) NOT NULL DEFAULT '08:00-05',
-    closed VARCHAR(30) NOT NULL DEFAULT '17:00-05'
+    closed VARCHAR(30) NOT NULL DEFAULT '18:00-05'
 );
 CREATE TABLE `regular_off_days` (
-    day_off_week VARCHAR(12) NOT NULL UNIQUE
+    day_of_week VARCHAR(12) NOT NULL UNIQUE
 );
 CREATE TABLE `custom_schedule` (
     day VARCHAR(12) NOT NULL PRIMARY KEY,

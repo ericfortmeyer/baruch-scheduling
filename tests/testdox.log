@@ -32,5 +32,7 @@ BaruchScheduling\Models\Hour
 BaruchScheduling\Models\Week
  [x] Exists
  [x] First day is first day of week of given day
+ [x] Displays expected month
+ [x] Days of week are as expected when params are deserialized json
  [x] Contains only instances of days
 
