@@ -44,21 +44,21 @@ final class Day
 
     /**
      * String representation of this day of the week
-     * example: "Sunday"
+     * @example "Sunday"
      * @var string
      */
     public $day_of_the_week = "";
 
     /**
      * Numerical representation of this day of the week
-     * example: 0 (for Sunday)
+     * @example 0 (for Sunday)
      * @var string
      */
     public $day_of_the_week_as_int = "";
 
     /**
      * Numerical representation of the day of the month without leading zeros
-     * example: 31
+     * @example 31
      * @var string
      */
     public $day_of_the_month = "";
@@ -142,13 +142,13 @@ final class Day
      * 7. Provide a list of off days which are dates to determine if this is an off day
      *
      * @param string $date  ISO 8601 date spec. REQUIRED
-     * @param Hour $open.  REQUIRED
-     * @param Hour $closed. REQUIRED
+     * @param Hour $open  REQUIRED
+     * @param Hour $closed REQUIRED
      * @param array<string> $regular_off_days (ex. ["Sunday", "Saturday"]). Default empty array
-     * @param array<Event> $events.  Default empty array
-     * @param array<CompareByDayOfWeekInterface> $custom_hours_by_day.  Default empty array
-     * @param array<CompareByDateInterface> $custom_hours_by_date. Default empty array
-     * @param array<string> $custom_off_days.  Array with ISO 8601 date strings. Default empty array
+     * @param array<Event> $events  Default empty array
+     * @param array<CompareByDayOfWeekInterface> $custom_hours_by_day  Default empty array
+     * @param array<CompareByDateInterface> $custom_hours_by_date Default empty array
+     * @param array<string> $custom_off_days  Array with ISO 8601 date strings. Default empty array
      */
     public function __construct(
         string $date,
