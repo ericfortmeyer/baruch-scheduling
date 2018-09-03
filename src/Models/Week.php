@@ -210,7 +210,7 @@ final class Week
          * with 30 days, it will return the month after the following month.
          * Example: Adding one month to a date time object representing 2019-03-31
          * will return May
-         * 
+         *
          * A quick fix is to subtract a couple of days from the first day of the week
          * before adding one month
          */
