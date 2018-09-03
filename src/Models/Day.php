@@ -4,6 +4,7 @@ namespace BaruchScheduling\Models;
 
 use \DateTimeImmutable;
 use \DateInterval;
+use function \BaruchScheduling\Functions\createRangeOfHours;
 
 final class Day
 {
@@ -30,11 +31,10 @@ final class Day
     public $isPast = false;
 
     /**
-     * Is this the last day of the month
+     * Is this the first day of the month
      * @var bool
      */
-    public $isLastDayOfMonth = false;
-
+    public $isFirstDayOfMonth = false;
 
     /**
      * ISO_8601 date in the format of yyyy-mm-dd
@@ -83,38 +83,54 @@ final class Day
     public $hours = [];
 
     /**
+     * First available hour of the day
+     * @var int
+     */
+    public $openHour;
+
+    /**
+     * @var Hour
+     */
+    protected $open;
+
+    /**
+     * @var Hour
+     */
+    protected $closed;
+
+    /**
      * An array of strings representing the regular off days of every week
      * @var array<string>
      */
-    public $regular_off_days = [];
+    protected $regular_off_days = [];
 
     /**
      * An array of objects representing days with a customized schedule
      * @var array<CompareByDayOfWeekInterface>
      */
-    public $custom_hours_by_day = [];
+    protected $custom_hours_by_day = [];
 
     /**
      * An array of objects representing dates with a customized schedule
      * @var array<CompareByDateInterface>
      */
-    public $custom_hours_by_date;
+    protected $custom_hours_by_date;
 
     /**
      * An array of date strings representing custom off days
      * @var array<string>
      */
-    public $custom_off_days = [];
+    protected $custom_off_days = [];
 
     /**
      * An array of events
      * @var array<Event>
      */
-    public $events = [];
+    protected $events = [];
 
     /**
      * Construct a day
-     * 
+     *
      * 1. Use an IS0 8601 date to determine which day it is.
      * 2. The 2nd and 3rd parameters are used as the start and end of the range of hours available
      * 3. Provide a list of off days which are days of the week to determine if this is an off day
@@ -124,7 +140,7 @@ final class Day
      * 6. If this date is contained in the provided custom hours by date,
      *    then use the open and closed hours provided as the start and end of the range of hours available
      * 7. Provide a list of off days which are dates to determine if this is an off day
-     * 
+     *
      * @param string $date  ISO 8601 date spec. REQUIRED
      * @param Hour $open.  REQUIRED
      * @param Hour $closed. REQUIRED
@@ -143,7 +159,7 @@ final class Day
         $custom_hours_by_day = [],
         $custom_hours_by_date = [],
         $custom_off_days = []
-    ){
+    ) {
         $this->date = $date;
         
         if ($open >= $closed) {
@@ -157,7 +173,8 @@ final class Day
 
         $this->isPast = $this->dt < $this->today();
         $this->isOffDay = $this->isOffDay($regular_off_days, $custom_off_days);
-        $this->isLastDayOfMonth = $this->isLastDayOfMonth();
+
+        $this->isFirstDayOfMonth = $this->isFirstDayOfMonth();
     
         /**
          * Set these for the add and sub methods
@@ -167,6 +184,15 @@ final class Day
         $this->custom_hours_by_day = $custom_hours_by_day;
         $this->custom_hours_by_date = $custom_hours_by_date;
         $this->custom_off_days = $custom_off_days;
+
+        /**
+         * The open and closed hour passed into the day that is passed into a week object
+         * is used to keep up with the regular business hours.
+         * The add and sub methods should use these variables so that newly created days
+         * can fall back on the regular business hours
+         */
+        $this->open = $open;
+        $this->closed = $closed;
 
         $this->createHours(
             $open,
@@ -183,8 +209,8 @@ final class Day
         // must use the constuctor or there will be bugs
         return new $this(
             $this->dateAfterAdding($interval_spec),
-            $this->open($this->hours),
-            $this->closed($this->hours),
+            $this->open,
+            $this->closed,
             $this->regular_off_days,
             $target_days_events ?? $this->events,
             $this->custom_hours_by_day,
@@ -198,8 +224,8 @@ final class Day
         // must use the constructor or there will be bugs
         return new $this(
             $this->dateAfterSubtracting($interval_spec),
-            $this->open($this->hours),
-            $this->closed($this->hours),
+            $this->open,
+            $this->closed,
             $this->regular_off_days,
             $target_days_events ?? $this->events,
             $this->custom_hours_by_day,
@@ -232,7 +258,7 @@ final class Day
      * Add objects that represent customization in the schedule using a day of the week
      * For example: "Instead of our regular hours, our business will open at 10:00am and close
      * at 2:00pm on Sundays."
-     * 
+     *
      * @param array<CompareByDayOfWeekInterface> $custom_hours
      * @return self
      */
@@ -254,7 +280,7 @@ final class Day
      * Add an array of objects that represent customization in the schedule using a given date
      * For example: "Instead of our regular hours, our business will open at 11:00am and close
      * at 2:00pm on July 14, 1914."
-     * 
+     *
      * @param array<CompareByDateInterface> $custom_hours_by_date
      * @return self
      */
@@ -294,7 +320,6 @@ final class Day
         string $date,
         array $events
     ) {
-
         $this->hours = $this->createRangeOfHoursFromCustomHoursByDate(
             $custom_hours_by_date,
             $open,
@@ -313,6 +338,8 @@ final class Day
             $date,
             $events
         );
+
+        $this->openHour = $this->hours[0]->hourOnlyFormat();
     }
 
     protected function createRangeOfHoursFromCustomHoursByDayOfWeek(
@@ -370,7 +397,7 @@ final class Day
 
     protected function createRangeOfHours(Hour $open, Hour $closed, string $date, array $events): array
     {
-        return \BaruchScheduling\Functions\createRangeOfHours(
+        return createRangeOfHours(
             $open->hourOnlyFormat(),
             $this->lastHourAvailable((int) $closed->hourOnlyFormat()),
             $date,
@@ -381,7 +408,7 @@ final class Day
     /**
      * Use an array of days of the week and an array of dates
      * to determine if this is an off day
-     * 
+     *
      * @param array<string> $regular_off_days
      * @param array<string> $custom_off_days
      * @return bool
@@ -408,11 +435,11 @@ final class Day
      * Use so that the constructor of the Day class can follow normal semantics.
      * For example you would normally say "Our business is open at 7 am and closed at 5 pm"
      * instead of "Our business is available during the hours of 7 am to 4 pm"
-     * 
+     *
      * @param int $hour_closed
-     * @return string
+     * @return int
      */
-    protected function lastHourAvailable(int $hour_closed): string
+    protected function lastHourAvailable(int $hour_closed): int
     {
         return (new Hour((string) ($hour_closed - 1)))->hourOnlyFormat();
     }
@@ -421,7 +448,7 @@ final class Day
      * First hour available for making appointments.
      * Based on when the schedule is open for business on the particular day
      * Uses the hours property which is an array of Hour objects
-     * 
+     *
      * @param array $hours
      * @return Hour
      */
@@ -434,7 +461,7 @@ final class Day
      * When the schedule is no longer available for making appointments.
      * Based on when the schedule is closed for business on the particular day.
      * Uses the hours property which is an array of Hour Objects
-     * 
+     *
      * @param array $hours
      * @return Hour
      */
@@ -456,12 +483,12 @@ final class Day
 
     protected function today(): DateTimeImmutable
     {
-        return new DateTimeImmutable();
+        return new DateTimeImmutable("00:00");
     }
 
-    protected function isLastDayOfMonth(): bool
+    protected function isFirstDayOfMonth(): bool
     {
-        return $this->dt->add(new DateInterval(static::ONE_DAY))->format("j") == "1";
+        return $this->dt->format(static::FORMAT_DAY_OF_MONTH) == "1";
     }
 
     protected function dayOfWeekAsTextFormat(): string

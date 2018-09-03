@@ -8,13 +8,32 @@ final class Week
     protected const DAY_OF_WEEK_AS_INT = "w";
 
     protected const DEFAULT_FORMAT = self::DAY_OF_WEEK_AS_TEXT;
-    protected const CUTOFF_DAY_FOR_DISPLAYING_CURRENT_MONTH = "Wednesday";
+    protected const DETERMINING_DAY_FOR_DISPLAYING_CURRENT_MONTH = "Wednesday";
 
     /**
      * Range of days of the week of a given Day object
      * @var array<Day>
      */
     public $days;
+
+    /**
+     * The earliest open hour of this week
+     * @var int
+     */
+    public $minHour;
+
+    /**
+     * The latest closed hour of this week
+     * @var int
+     */
+    public $maxHour;
+
+    /**
+     * Range of hours starting from the earliest available hour
+     * and the latest available hour of all days of this week
+     * @var array
+     */
+    public $rangeOfHours;
 
     /**
      * Month that should be displayed
@@ -25,8 +44,57 @@ final class Week
     public function __construct(Day $day)
     {
         $this->days = $this->rangeOfDays($day);
+
+        $this->minHour = $this->earliestHourOfTheWeek($this->days);
+
+        $this->maxHour = $this->latestHourOfTheWeek($this->days);
+
+        $this->rangeOfHours = \BaruchScheduling\Functions\createRangeOfHours(
+            $this->minHour,
+            $this->maxHour,
+            $this->days[0]->date
+        );
+
         $this->month = $this->monthToDisplay($this->days);
     }
+
+    /**
+     * Determine the earliest open hour of all days of this week.
+     * Find the min of all of the open hours of the days of this week.
+     * @param array $days
+     * @return int
+     */
+    protected function earliestHourOfTheWeek(array $days)
+    {
+        return min(
+            array_map(
+                function (Day $day): int {
+                    return $day->hours[0]->hourOnlyFormat();
+                },
+                $days
+            )
+        );
+    }
+
+    /**
+     * Determine the latest closed hour of all days of this week.
+     * Find the max of all of the closed hours of the days of this week.
+     * @param array $days
+     * @return int
+     */
+    protected function latestHourOfTheWeek(array $days): int
+    {
+        return max(
+            array_map(
+                function (Day $day): int {
+                    return end($day->hours)->hourOnlyFormat();
+                },
+                $days
+            )
+        );
+    }
+
+    
 
     /**
      * Create a week that has as one of it's "days" the given day
@@ -99,7 +167,7 @@ final class Week
      */
     protected function daysOfWeekAsIntegers(): array
     {
-        return range(0,6);
+        return range(0, 6);
     }
 
     /**
@@ -117,25 +185,49 @@ final class Week
         return (int) $day->day_of_the_week_as_int;
     }
 
+    /**
+     * Display the following month if this week contains the first day of the next month
+     * and it is on or before the determining day of the week
+     * @param $days
+     * @return string
+     */
     protected function monthToDisplay(array $days): string
     {
-        /**
-         * Display the following month if the last day of the month is on or before
-         * this day of the week
-         */
         return $this->shouldDisplayNextMonth($days)
-            ? $this->nextMonth()
-            : $this->currentMonth();
+            ? $this->nextMonth($days)
+            : $this->currentMonth($days);
     }
 
-    protected function nextMonth(): string
+    /**
+     * @param $days
+     * @return string
+     */
+    protected function nextMonth(array $days): string
     {
-        return $this->days[0]->add(Day::ONE_MONTH)->month;
+        /**
+         * UNEXPECTED BEHAVIOR:
+         * If you add one month to the 31st day of a month that is followed by a month
+         * with 30 days, it will return the month after the following month.
+         * Example: Adding one month to a date time object representing 2019-03-31
+         * will return May
+         * 
+         * A quick fix is to subtract a couple of days from the first day of the week
+         * before adding one month
+         */
+        return $days[0]
+            ->sub(Day::ONE_DAY)
+            ->sub(Day::ONE_DAY)
+            ->add(Day::ONE_MONTH)
+            ->month;
     }
 
-    protected function currentMonth(): string
+    /**
+     * @param $days
+     * @return string
+     */
+    protected function currentMonth(array $days): string
     {
-        return $this->days[0]->month;
+        return $days[0]->month;
     }
 
     protected function shouldDisplayNextMonth(array $days): bool
@@ -144,25 +236,22 @@ final class Week
             true,
             array_map(
                 function (Day $day) {
-                    /**
-                     * If both are true, this particular week has the last day of the month
-                     */
-                    return $day->isLastDayOfMonth
-                        && $this->isOnOrAfterCutoffDay($day);
+                    return $day->isFirstDayOfMonth
+                        && $this->isOnOrBeforeDeterminingDay($day);
                 },
                 $days
             )
         );
     }
 
-    protected function isOnOrAfterCutoffDay(Day $day): bool
+    protected function isOnOrBeforeDeterminingDay(Day $day): bool
     {
         return $this->dayOfWeekAsInt($day)
-            >= (new \DateTimeImmutable())
+            <= (new \DateTimeImmutable())
                 ->createFromFormat(
                     Day::DAY_OF_WEEK_AS_TEXT,
-                    self::CUTOFF_DAY_FOR_DISPLAYING_CURRENT_MONTH
+                    self::DETERMINING_DAY_FOR_DISPLAYING_CURRENT_MONTH
                 )
-                ->format(Day::DAY_OF_WEEK_AS_INT) == "1";
+                ->format(Day::DAY_OF_WEEK_AS_INT);
     }
 }
