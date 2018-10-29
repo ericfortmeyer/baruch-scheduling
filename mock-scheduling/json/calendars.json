@@ -1,0 +1,37 @@
+{
+    "2528258919fa743b285c279df65cf299a6b3482ad913874e8330ab947e2439f5": {
+        "daysOff": [
+            "2018-09-02",
+            "2018-09-14"
+        ],
+        "regularSchedule": {
+            "open": "T07:00-05",
+            "closed": "T17:00-05",
+            "offDays": [
+                "Sunday",
+                "Saturday"
+            ]
+        },
+        "customHoursByDayOfWeek": [
+            {
+                "day": "Monday",
+                "open": "T09:00-05",
+                "closed": null
+            },
+            {
+                "day": "Wednesday",
+                "open": null,
+                "closed": "T19:00-05"
+            },
+            {
+                "day": "Friday",
+                "open": "T10:00-05",
+                "closed": "T20:00-05"
+            }
+        ]    
+    },
+
+    "fake_calendar_id": {
+
+    }
+}
