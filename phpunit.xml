@@ -8,9 +8,6 @@
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
-    <logging>
-    	<log type="testdox-text" target="testdox.log"/>
-    </logging>
     <php>
         <const name="PHPUNIT_TESTSUITE" value="true"/>
     </php>
