@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class DayTest extends TestCase
 {
+    protected $test_class;
+    protected $params = [];
+
     protected function setup()
     {
         $this->params = [

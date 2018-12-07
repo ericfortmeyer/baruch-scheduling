@@ -8,6 +8,8 @@ use \BaruchScheduling\Models\Hour;
 
 class CreateRangeOfHoursTest extends TestCase
 {
+    protected $test_params = [];
+
     protected function setup()
     {
         $id = $this->getHash();

@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase
 {
+    protected $test_params = [];
+
     protected function setup()
     {
         $id = $this->getHash();
