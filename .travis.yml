@@ -1,0 +1,15 @@
+language: php
+
+php:
+  - '7.2'
+  - '7.3'
+
+install:
+  - composer install
+
+before_script:
+  - phpenv config-rm xdebug.ini || echo "No XDebug config"
+
+script:
+  - vendor/bin/phan
+  - vendor/bin/phpcs --standard=PSR1,PSR2,PSR12 src/
