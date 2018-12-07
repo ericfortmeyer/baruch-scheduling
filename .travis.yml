@@ -5,6 +5,7 @@ php:
   - '7.3'
 
 install:
+  - ./bin/ci/install_php_modules.sh
   - composer install
 
 before_script:
