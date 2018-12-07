@@ -18,9 +18,9 @@ final class Hour
     protected const DEFAULT_FORMAT = self::FORMAT_WITH_MERIDIEM_LOWER;
 
     /**
-     * @var string
+     * @var int
      */
-    protected $hour = "";
+    protected $hour = 0;
 
     /**
      * @var bool
@@ -39,10 +39,10 @@ final class Hour
      * The hour string provided in the constructor can be either an int
      * or a properly formatted ISO 8601 time string with or without timezone
      *
-     * @param string $hour
+     * @param mixed $hour
      * @param bool $isBooked
      */
-    public function __construct(string $hour, bool $isBooked = false, bool $isPast = false)
+    public function __construct($hour, bool $isBooked = false, bool $isPast = false)
     {
         $this->hour = $hour;
         $this->isBooked = $isBooked;
@@ -71,9 +71,10 @@ final class Hour
 
     protected function withFormat(string $format): string
     {
+        $hour = (string) $this->hour;
         return \date_create_immutable_from_format(
-            $this->mapTimeStringToFormat($this->hour),
-            $this->hour
+            $this->mapTimeStringToFormat($hour),
+            $hour
         )->format($format);
     }
 
