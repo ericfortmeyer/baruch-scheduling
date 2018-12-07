@@ -53,11 +53,6 @@ function createRangeOfHours(int $first_hour, int $last_hour, string $date, array
                     )
                 )
             );
-            /**
-             * TODO:
-             * Add a isPast flag.
-             * This is the only way to prevent today's past timeslots from being available
-             */
             return new Hour($hour, $isBooked, $isPast);
         },
         range($first_hour, $last_hour)
