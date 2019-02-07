@@ -9,6 +9,6 @@
     },
     "autoload": {
         "psr-4": {"BaruchScheduling\\": "./src"},
-        "files": ["functions.php"]
+        "files": ["./functions.php"]
     }
 }
